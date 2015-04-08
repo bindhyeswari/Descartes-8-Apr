@@ -15,18 +15,42 @@
     <script>
         // make an ajax call to get the information that the user has requested for
 
+        var linkheader = '<https://api.github.com/search/repositories?q=nodejs&page=2>; rel="next", ' +
+                '<https://api.github.com/search/repositories?q=nodejs&page=34>; rel="last"';
+        updateLinks(linkheader);
+
+
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('input[name="query"]').addEventListener('change', function () {
 
                 var url = 'https://api.github.com/search/repositories?q=' + this.value;
                 document.querySelector('h3.query').innerHTML = 'url: ' + url;
 
-                makeAjaxCall(url, function (data) {
-                    console.log(data);
+                makeAjaxCall(url, function (xhr) {
+                    updateLinks(xhr.getResponseHeader('Link'));
+                    var data = JSON.parse(xhr.responseText);
                     printSearchResults(data.items);
                 });
             });
         });
+
+        function updateLinks(linkheader) {
+
+            function parseLinkHeader(header) {
+                var re = /<[^>]+>;\s+rel="[^"]+"/gmi;
+                var matches = linkheader.match(re);
+
+
+                return matches.reduce(function (obj, m) {
+                    var re = /<([^>]+)>;\s+rel="([^"]+)"/gmi;
+                    var info = re.exec(m);
+                    obj[info[2]] = info[1];
+                    return obj;
+                }, {});
+            }
+
+            console.log(parseLinkHeader(linkheader));
+        }
 
         function makeAjaxCall(url, callback) {
 
@@ -34,7 +58,7 @@
             xhr.open('GET', url);
             xhr.addEventListener('readystatechange', function () {
                 if (xhr.readyState === 4) {
-                    callback(JSON.parse(xhr.responseText));
+                    callback(xhr);
                 }
 
             });
@@ -71,9 +95,16 @@
 <body>
     <section>
         <input type="text" name="query"/>
+
         <h3 class="query">
             Query for:
         </h3>
+        <div>
+            <a href="#">First Page</a>
+            <a href="#">Previous Page</a>
+            <a href="#">Next Page</a>
+            <a href="#">Last Page</a>
+        </div>
         <ol id="results">
 
         </ol>
