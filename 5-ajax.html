@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="base.css"/>
+    <style>
+        section {
+            padding: 3em;
+        }
+        h3 {
+            margin: 1em;font-weight: 300;
+        }
+    </style>
+    <script>
+        // make an ajax call to get the information that the user has requested for
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('input[name="query"]').addEventListener('change', function () {
+
+                var url = 'https://api.github.com/search/repositories?q=' + this.value;
+                document.querySelector('h3.query').innerHTML = 'url: ' + url;
+
+                makeAjaxCall(url, function (data) {
+                    console.log(data);
+                    printSearchResults(data.items);
+                });
+            });
+        });
+
+        function makeAjaxCall(url, callback) {
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.addEventListener('readystatechange', function () {
+                if (xhr.readyState === 4) {
+                    callback(JSON.parse(xhr.responseText));
+                }
+
+            });
+            xhr.send();
+
+        }
+
+        function printSearchResults(repos) {
+            var ul = document.querySelector('#results');
+            ul.innerHTML = '';
+            repos.forEach(function (repo) {
+                createElement('li', ul, '', repo['full_name']);
+            });
+        }
+
+        function createElement(elementType, parent, className, innerHTML, custom) {
+            var element = document.createElement(elementType);
+            if (parent) parent.appendChild(element);
+            if (className) element.className = className;
+            if (innerHTML) element.innerHTML = innerHTML;
+
+            if (typeof custom !== 'undefined') {
+                for (var prop in custom) {
+                    element.setAttribute(prop, custom[prop]);
+                }
+            }
+
+            return element;
+        }
+
+
+    </script>
+</head>
+<body>
+    <section>
+        <input type="text" name="query"/>
+        <h3 class="query">
+            Query for:
+        </h3>
+        <ol id="results">
+
+        </ol>
+    </section>
+
+</body>
+</html>

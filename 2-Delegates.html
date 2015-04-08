@@ -21,6 +21,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             var ul = createElement('ul', document.body);
 
+            ul.addEventListener('click', function (event) {
+                console.log(event.target.dataset.fid);
+            });
+
             for (var i = 0; i < 4; i++) {
                 // create 4 li elements with a data-fid attribute
                 var li = createElement('li', ul, '', 'This is li element ' + (i + 1), {
@@ -29,9 +33,9 @@
 
                 // add an event listener onto the li element
                 // to print out the fid once the li element is created
-                li.addEventListener('click', function () {
+                /*li.addEventListener('click', function () {
                     console.log(this.dataset.fid);
-                });
+                });*/
             }
         });
 

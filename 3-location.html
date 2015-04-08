@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        for (var prop in location) {
+            console.log(prop + ': ' + location[prop]);
+        }
+    </script>
+    <style>
+        div.dummy {
+            height: 800px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#raymond">Go to the div Raymond</a>
+
+    <div class="dummy"></div>
+
+    <div id="raymond">Raymond</div>
+    <form>
+        <input type="text" name="user"/>
+        <input type="email" name="email"/>
+        <input type="submit" value="Send Data to Server"/>
+    </form>
+</body>
+</html>
